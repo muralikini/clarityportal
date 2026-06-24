@@ -39,8 +39,9 @@ CATEGORIES = {
         {"name": "WIRED AI", "url": "https://www.wired.com/feed/tag/ai/latest/rss"},
         {"name": "Quanta Magazine", "url": "https://api.quantamagazine.org/feed/"},
         {"name": "Mark Tech Post", "url": "https://www.marktechpost.com/feed/"},
-        #{"name": "The Batch", "url": "https://www.deeplearning.ai/the-batch/feed/"},
+        {"name": "MIT Technology Review", "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed/"},
         {"name": "arXiv cs.AI (research)", "url": "https://arxiv.org/rss/cs.AI"}, 
+        {"name": "Hacker News", "url": "https://hnrss.github.io/frontpage"},
     ],
     "Science & Mathematics": [
         {"name": "Quanta Magazine", "url": "https://api.quantamagazine.org/feed/"},
@@ -72,7 +73,7 @@ CATEGORIES = {
         {"name": "Economic Times - Recent Stories", "url": "https://b2b.economictimes.indiatimes.com/rss/recentstories"},
         {"name": "Economic Times - Electronics", "url": "https://b2b.economictimes.indiatimes.com/rss/electronics"},
         {"name": "Economic Times - Entreprenuer", "url": "https://b2b.economictimes.indiatimes.com/rss/entrepreneur"},
-        #{"name": "Subramoney", "url": "https://subramoney.com/feed/"},
+        {"name": "Harvard Business Review", "url": "https://feeds.feedburner.com/harvardbusiness"},
         {"name": "Freefincal (Pattu)", "url": "https://freefincal.com/feed/"},
         #{"name": "Moneycontrol", "url": "https://www.moneycontrol.com/rss/"},
         {"name": "ValuePickr", "url": "https://valuepickr.com/feed/"},
@@ -103,6 +104,9 @@ CATEGORIES = {
             {"name": "Stratechery (Ben Thompson)", "url": "https://stratechery.com/feed/"},
             {"name": "Dan Wang", "url": "https://danwang.substack.com/feed/"},
             {"name": "Balaji Srinivasan", "url": "https://balajis.com/feed/"},
+            {"name": "Aeon Magazine", "url": "https://aeon.co/feed.rss"},
+            {"name": "Quantamagazine", "url": "https://api.quantamagazine.org/feed/"},
+            {"name": "Seth Godin", "url": "https://feeds.feedblitz.com/sethsblog"},
     ],
     "Education": [
         {"name": "Learn CBSE", "url": "https://www.learncbse.in/feed/"},
@@ -120,9 +124,13 @@ CATEGORIES = {
     "Custom Scraped": [
          # Add agricultural technology, farming innovations, agri-research feeds here
         {"name": "Substack", "url": "https://nextplayso.substack.com/p/best-blogs-for-tech-people"},
-        #{"name": "ESPN Cricinfo", "url": "https://www.espncricinfo.com/"},
-        {"name": "PGurus", "url": "https://www.pgurus.com/"},
-        #{"name": "PrecisionAg", "url": "https://www.precisionag.com/feed/"},
+        {"name": "Defence Watch", "url": "https://www.defencewatch.in"},
+        {"name": "MP-IDSA", "url": "https://idsa.in/"},
+        {"name": "The Ken", "url": "https://the-ken.com/"},
+        {"name": "The Morning Context", "url": "https://themorningcontext.com"},
+        {"name": "Safal Niveshak", "url": "https://safalniveshak.com"},
+        {"name": "Capitalmind", "url": "https://capitalmind.in"},
+        {"name": "The Bridge", "url": "https://thebridge.in"},
     ],
 }
 
