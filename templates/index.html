@@ -16,6 +16,7 @@
         }
         .news-card { transition: all 0.2s; }
         .news-card:hover { transform: translateY(-3px); }
+        .read-article { opacity: 0.6; }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-200">
@@ -31,12 +32,14 @@
                     <span class="text-3xl font-semibold tracking-tighter text-indigo-400">Portal</span>
                 </div>
             </div>
+            
             <div class="flex items-center gap-x-4">
                 <input id="search-input" type="text" placeholder="Search titles..." 
                        class="bg-zinc-900 border border-zinc-700 rounded-3xl px-5 py-3 w-80 text-sm"
                        onkeyup="if (event.key === 'Enter') filterArticles()">
+                
                 <button onclick="refreshCurrent()" 
-                        class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-3xl text-sm flex items-center gap-x-2">
+                        class="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-3xl text-sm flex items-center gap-x-2">
                     <i class="fa-solid fa-sync-alt"></i>
                     <span>Refresh</span>
                 </button>
@@ -45,14 +48,25 @@
 
         <div class="px-8 pt-8">
             <!-- Categories -->
-            <div class="mb-6">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="text-sm font-semibold text-zinc-400">CATEGORIES</span>
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-x-2 mb-3">
+                        <span class="text-sm font-semibold text-zinc-400">CATEGORIES</span>
+                    </div>
+                    <div id="category-pills" class="flex flex-wrap gap-3"></div>
                 </div>
-                <div id="category-pills" class="flex flex-wrap gap-3"></div>
+                
+                <!-- Hide Read Toggle -->
+                <div class="flex items-center gap-x-2 text-sm">
+                    <label class="flex items-center gap-x-2 cursor-pointer">
+                        <input type="checkbox" id="hide-read-toggle" checked 
+                               onchange="toggleHideRead()" class="accent-indigo-600">
+                        <span class="text-zinc-400">Hide read articles</span>
+                    </label>
+                </div>
             </div>
 
-            <!-- Articles Grid -->
+            <!-- Articles -->
             <div id="articles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </div>
     </div>
@@ -60,6 +74,20 @@
     <script>
         let currentCategory = '';
         let allArticles = [];
+        let readArticles = new Set();
+        let hideRead = true;
+
+        // Load read articles from localStorage
+        function loadReadState() {
+            const saved = localStorage.getItem('clarity_read_articles');
+            if (saved) {
+                readArticles = new Set(JSON.parse(saved));
+            }
+        }
+
+        function saveReadState() {
+            localStorage.setItem('clarity_read_articles', JSON.stringify([...readArticles]));
+        }
 
         async function loadCategories() {
             const res = await fetch('/api/categories');
@@ -73,23 +101,17 @@
                 btn.textContent = cat;
                 
                 btn.onclick = () => {
-                    // Remove active from all
                     document.querySelectorAll('#category-pills button').forEach(b => {
                         b.classList.remove('active', 'border-indigo-500', 'bg-indigo-600', 'text-white');
                         b.classList.add('border-zinc-700', 'bg-zinc-900', 'text-zinc-300');
                     });
-                    // Add active to clicked
                     btn.classList.add('active', 'border-indigo-500', 'bg-indigo-600', 'text-white');
                     btn.classList.remove('border-zinc-700', 'bg-zinc-900', 'text-zinc-300');
-                    
                     loadCategory(cat);
                 };
                 
                 container.appendChild(btn);
-                
-                if (index === 0) {
-                    setTimeout(() => loadCategory(cat), 100);
-                }
+                if (index === 0) setTimeout(() => loadCategory(cat), 100);
             });
         }
 
@@ -108,14 +130,22 @@
             const container = document.getElementById('articles-container');
             container.innerHTML = '';
 
-            if (articles.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-12 text-zinc-400">No articles found in this category.</div>';
+            let visibleArticles = articles;
+            
+            if (hideRead) {
+                visibleArticles = articles.filter(a => !readArticles.has(a.link));
+            }
+
+            if (visibleArticles.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-zinc-400">No articles found.</div>';
                 return;
             }
 
-            articles.forEach(a => {
+            visibleArticles.forEach(a => {
+                const isRead = readArticles.has(a.link);
+                
                 const div = document.createElement('div');
-                div.className = 'news-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col h-full';
+                div.className = `news-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col h-full ${isRead ? 'read-article' : ''}`;
                 
                 const imageHTML = a.image 
                     ? `<img src="${a.image}" class="w-full h-40 object-cover" alt="">` 
@@ -127,16 +157,24 @@
                         <div class="absolute top-3 left-3">
                             <span class="text-[10px] px-3 py-1 rounded-2xl bg-black/70 text-white font-medium">${a.source}</span>
                         </div>
+                        ${isRead ? `<div class="absolute top-3 right-3 bg-emerald-600 text-white text-[10px] px-2.5 py-0.5 rounded font-medium flex items-center gap-1"><i class="fa-solid fa-check text-xs"></i> READ</div>` : ''}
                     </div>
+                    
                     <div class="p-5 flex flex-col flex-1">
                         <a href="${a.link}" target="_blank" class="font-semibold text-[15.5px] leading-tight hover:text-indigo-400 transition-colors line-clamp-3">
                             ${a.title}
                         </a>
                         <p class="text-sm text-zinc-400 mt-4 flex-1 line-clamp-3">${a.summary || ''}</p>
                         
-                        <div class="mt-auto pt-4 flex justify-end">
+                        <div class="mt-auto pt-4 flex justify-between items-center">
+                            <button onclick="markAsRead('${a.link}', this)" 
+                                    class="text-xs px-3 py-1.5 text-emerald-400 hover:bg-emerald-950/60 rounded-2xl flex items-center gap-x-1.5 transition-colors">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Mark read</span>
+                            </button>
+                            
                             <a href="${a.link}" target="_blank" 
-                               class="text-xs px-4 py-2 bg-zinc-800 hover:bg-indigo-600 rounded-2xl flex items-center gap-x-2 text-white transition-colors">
+                               class="text-xs px-4 py-2 bg-zinc-800 hover:bg-indigo-600 rounded-2xl flex items-center gap-x-2 transition-colors">
                                 Read <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
                             </a>
                         </div>
@@ -144,6 +182,30 @@
                 `;
                 container.appendChild(div);
             });
+        }
+
+        function markAsRead(link, buttonElement) {
+            readArticles.add(link);
+            saveReadState();
+            
+            const card = buttonElement.closest('.news-card');
+            if (card) {
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0.5';
+                
+                setTimeout(() => {
+                    if (hideRead) {
+                        card.style.display = 'none';
+                    } else {
+                        renderArticles(allArticles);
+                    }
+                }, 250);
+            }
+        }
+
+        function toggleHideRead() {
+            hideRead = document.getElementById('hide-read-toggle').checked;
+            renderArticles(allArticles);
         }
 
         function filterArticles() {
@@ -165,7 +227,11 @@
             }
         }
 
-        window.onload = loadCategories;
+        window.onload = function() {
+            loadReadState();
+            document.getElementById('hide-read-toggle').checked = hideRead;
+            loadCategories();
+        };
     </script>
 </body>
 </html>

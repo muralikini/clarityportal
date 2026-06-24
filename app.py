@@ -139,7 +139,7 @@ CATEGORIES = {
         {"name": "Substack", "url": "https://nextplayso.substack.com/p/best-blogs-for-tech-people"},
         {"name": "Defence Watch", "url": "https://www.defencewatch.in"},
         {"name": "MP-IDSA", "url": "https://idsa.in/"},
-        {"name": "The Ken", "url": "https://the-ken.com/"},
+        #{"name": "The Ken", "url": "https://the-ken.com/"},
         {"name": "The Morning Context", "url": "https://themorningcontext.com"},
         {"name": "Safal Niveshak", "url": "https://safalniveshak.com"},
         {"name": "Capitalmind", "url": "https://capitalmind.in"},
@@ -149,7 +149,7 @@ CATEGORIES = {
 }
 
 # ==================== IMPROVED SCRAPER ====================
-def scrape_site(url, limit=8):
+def scrape_site(url, limit=10): # number of articles per site
     articles = []
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
@@ -218,12 +218,12 @@ def api_news():
     if category == "Custom Scraped":
         all_articles = []
         for item in CATEGORIES["Custom Scraped"]:
-            arts = scrape_site(item["url"], limit=8)
+            arts = scrape_site(item["url"], limit=10)
             for a in arts:
                 a['source'] = item["name"]
                 all_articles.append(a)
         all_articles.sort(key=lambda x: x.get('pub_ts', 0), reverse=True)
-        return jsonify({'category': category, 'count': len(all_articles), 'articles': all_articles[:25]})
+        return jsonify({'category': category, 'count': len(all_articles), 'articles': all_articles[:50]})     # articles per category
 
     if category not in CATEGORIES:
         return jsonify({'error': 'Invalid category'}), 400
@@ -232,7 +232,7 @@ def api_news():
     for feed_info in CATEGORIES[category]:
         try:
             feed = feedparser.parse(feed_info['url'])
-            for entry in feed.entries[:8]:
+            for entry in feed.entries[:10]:                     # number of articles per feed
                 # Image extraction
                 image_url = None
                 if 'media_thumbnail' in entry and entry.media_thumbnail:
@@ -256,7 +256,7 @@ def api_news():
             pass
 
     all_articles.sort(key=lambda x: x.get('pub_ts', 0), reverse=True)
-    return jsonify({'category': category, 'count': len(all_articles), 'articles': all_articles[:25]})
+    return jsonify({'category': category, 'count': len(all_articles), 'articles': all_articles[:50]}) # articles per category
 
 if __name__ == '__main__':
     print("🚀 Starting Clarity Portal")
