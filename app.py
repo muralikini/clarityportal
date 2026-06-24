@@ -75,8 +75,14 @@ CATEGORIES = {
         {"name": "Economic Times - Entreprenuer", "url": "https://b2b.economictimes.indiatimes.com/rss/entrepreneur"},
         {"name": "Harvard Business Review", "url": "https://feeds.feedburner.com/harvardbusiness"},
         {"name": "Freefincal (Pattu)", "url": "https://freefincal.com/feed/"},
-        #{"name": "Moneycontrol", "url": "https://www.moneycontrol.com/rss/"},
+        {"name": "Jago Investor", "url": "https://www.jagoinvestor.com/feed"},
         {"name": "ValuePickr", "url": "https://valuepickr.com/feed/"},
+        {"name": "Ideas For India", "url": "https://www.ideasforindia.in/rss.xml"},
+        {"name": "PRS Legislative Research", "url": "https://prsindia.org/policy/policy-watch/rss"},
+        {"name": "Livemint", "url": "https://www.livemint.com/rss/opinion"},
+        {"name": "Undergraduate Economist", "url": "https://alexmthomas.com/feed/"},
+        {"name": "Ajay Shah’s Blog", "url": "https://ajayshahblog.blogspot.com/feeds/posts/default"},
+        #{"name": "Livemint", "url": "https://www.livemint.com/rss/opinion"},
     ],
     "Sports": [
          {"name": "BBC Sport", "url": "https://feeds.bbci.co.uk/sport/rss.xml"},
@@ -88,11 +94,15 @@ CATEGORIES = {
     ],
     "History, Legends & Heritage": [
          {"name": "Human Journey", "url": "https://humanjourney.us/feed/"},
-        #{"name": "Elon Musk", "url": "https://x.ai/blog/feed"},       
+        {"name": "Puratattva", "url": "https://puratattva.in/feed"},       
         {"name": "The Marginalian", "url": "https://www.themarginalian.org/feed/"},
-        #{"name": "Collections of Indian History", "url": "https://rss.feedspot.com/indian_history_rss_feeds/"},
+        {"name": "The India Forum", "url": "https://www.theindiaforum.in/rss.xml"},
         {"name": "Indian History Collective", "url": "https://indianhistorycollective.com/feed/"},
         {"name": "The Story Of India", "url": "https://storytrails.in/feed/"},
+        {"name": "Varnam (Indian History & Culture)", "url": "https://www.varnam.org/feed"},
+        {"name": "Sreenivasarao's Blogs (History & Antiquity Tag)", "url": "https://sreenivasaraos.com/tag/indian-history/feed/"},
+        {"name": "The History of India Podcast (by Kit Patrick)", "url": "https://historyofindiapodcast.libsyn.com/rss"},
+        {"name": "Echoes of India: A History Podcast (by Anirudh Kanisetti)", "url": "https://www.omnycontent.com/d/playlist/a8ca89fb-d678-436d-9aa1-ae4c00465228/1bbf0837-291f-4efc-8b8a-ae4c00465a88/1049755f-8f8f-4ba6-bbd1-ae4c00465a9a/podcast.rss"},
     ],
     "Podblogs": [
             {"name": "Tim Ferriss Blog", "url": "https://tim.blog/feed/"},
@@ -131,6 +141,7 @@ CATEGORIES = {
         {"name": "Safal Niveshak", "url": "https://safalniveshak.com"},
         {"name": "Capitalmind", "url": "https://capitalmind.in"},
         {"name": "The Bridge", "url": "https://thebridge.in"},
+        {"name": "Live History India", "url": "https://livehistoryindia.com"},
     ],
 }
 
