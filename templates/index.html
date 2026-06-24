@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarity Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .category-pill { transition: all 0.1s ease; }
+        .category-pill.active {
+            background-color: #6366f1;
+            color: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .news-card { transition: all 0.2s; }
+        .news-card:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200">
+    <div class="max-w-screen-2xl mx-auto">
+        <!-- Header -->
+        <div class="px-8 py-6 border-b border-zinc-800 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-newspaper text-white text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-semibold tracking-tighter">Clarity</span>
+                    <span class="text-3xl font-semibold tracking-tighter text-indigo-400">Portal</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-x-4">
+                <input id="search-input" type="text" placeholder="Search titles..." 
+                       class="bg-zinc-900 border border-zinc-700 rounded-3xl px-5 py-3 w-80 text-sm"
+                       onkeyup="if (event.key === 'Enter') filterArticles()">
+                <button onclick="refreshCurrent()" 
+                        class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-3xl text-sm flex items-center gap-x-2">
+                    <i class="fa-solid fa-sync-alt"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="px-8 pt-8">
+            <!-- Categories -->
+            <div class="mb-6">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="text-sm font-semibold text-zinc-400">CATEGORIES</span>
+                </div>
+                <div id="category-pills" class="flex flex-wrap gap-3"></div>
+            </div>
+
+            <!-- Articles Grid -->
+            <div id="articles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = '';
+        let allArticles = [];
+
+        async function loadCategories() {
+            const res = await fetch('/api/categories');
+            const categories = await res.json();
+            const container = document.getElementById('category-pills');
+            container.innerHTML = '';
+
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.className = `category-pill px-6 py-3 rounded-3xl text-sm font-medium border transition-all ${index === 0 ? 'active border-indigo-500 bg-indigo-600 text-white' : 'border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-300'}`;
+                btn.textContent = cat;
+                
+                btn.onclick = () => {
+                    // Remove active from all
+                    document.querySelectorAll('#category-pills button').forEach(b => {
+                        b.classList.remove('active', 'border-indigo-500', 'bg-indigo-600', 'text-white');
+                        b.classList.add('border-zinc-700', 'bg-zinc-900', 'text-zinc-300');
+                    });
+                    // Add active to clicked
+                    btn.classList.add('active', 'border-indigo-500', 'bg-indigo-600', 'text-white');
+                    btn.classList.remove('border-zinc-700', 'bg-zinc-900', 'text-zinc-300');
+                    
+                    loadCategory(cat);
+                };
+                
+                container.appendChild(btn);
+                
+                if (index === 0) {
+                    setTimeout(() => loadCategory(cat), 100);
+                }
+            });
+        }
+
+        async function loadCategory(cat) {
+            currentCategory = cat;
+            const container = document.getElementById('articles-container');
+            container.innerHTML = '<div class="col-span-full text-center py-12 text-zinc-400">Loading...</div>';
+
+            const res = await fetch(`/api/news?category=${encodeURIComponent(cat)}`);
+            const data = await res.json();
+            allArticles = data.articles || [];
+            renderArticles(allArticles);
+        }
+
+        function renderArticles(articles) {
+            const container = document.getElementById('articles-container');
+            container.innerHTML = '';
+
+            if (articles.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-zinc-400">No articles found in this category.</div>';
+                return;
+            }
+
+            articles.forEach(a => {
+                const div = document.createElement('div');
+                div.className = 'news-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col h-full';
+                
+                const imageHTML = a.image 
+                    ? `<img src="${a.image}" class="w-full h-40 object-cover" alt="">` 
+                    : `<div class="w-full h-40 bg-zinc-950 flex items-center justify-center"><i class="fa-solid fa-newspaper text-5xl text-zinc-700"></i></div>`;
+
+                div.innerHTML = `
+                    <div class="relative">
+                        ${imageHTML}
+                        <div class="absolute top-3 left-3">
+                            <span class="text-[10px] px-3 py-1 rounded-2xl bg-black/70 text-white font-medium">${a.source}</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-1">
+                        <a href="${a.link}" target="_blank" class="font-semibold text-[15.5px] leading-tight hover:text-indigo-400 transition-colors line-clamp-3">
+                            ${a.title}
+                        </a>
+                        <p class="text-sm text-zinc-400 mt-4 flex-1 line-clamp-3">${a.summary || ''}</p>
+                        
+                        <div class="mt-auto pt-4 flex justify-end">
+                            <a href="${a.link}" target="_blank" 
+                               class="text-xs px-4 py-2 bg-zinc-800 hover:bg-indigo-600 rounded-2xl flex items-center gap-x-2 text-white transition-colors">
+                                Read <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterArticles() {
+            const q = document.getElementById('search-input').value.toLowerCase().trim();
+            if (!q) {
+                renderArticles(allArticles);
+                return;
+            }
+            const filtered = allArticles.filter(a => 
+                a.title.toLowerCase().includes(q) || 
+                (a.summary && a.summary.toLowerCase().includes(q))
+            );
+            renderArticles(filtered);
+        }
+
+        function refreshCurrent() {
+            if (currentCategory) {
+                loadCategory(currentCategory);
+            }
+        }
+
+        window.onload = loadCategories;
+    </script>
+</body>
+</html>
