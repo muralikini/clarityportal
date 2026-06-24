@@ -60,9 +60,12 @@ CATEGORIES = {
         {"name": "The Times Of India-World", "url": "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms"}, 
         {"name": "The Times Of Israel", "url": "https://www.timesofisrael.com/feed/"}, 
         {"name": "The Drive (War Zone)", "url": "https://www.thedrive.com/feed"}, 
-        #{"name": "Defense News", "url": "https://www.defensenews.com/rss/"}, 
+        {"name": "RANE Stratfor", "url": "https://worldview.stratfor.com/feed"},
+        {"name": "Geopolitical Monitor", "url": "https://www.geopoliticalmonitor.com/feed/"},  
         {"name": "Breaking Defense", "url": "https://breakingdefense.com/feed/"}, 
         {"name": "Space.com", "url": "https://www.space.com/feeds/all"}, 
+        {"name": "U.S. Naval Institute", "url": "https://news.usni.org/feed"},
+        {"name": "Carnegie Endowment for International Peace", "url": "https://carnegieendowment.org/rss/feeds/all.xml"},
         {"name": "Popular Mechanics - Military", "url": "https://www.popularmechanics.com/rss/"},
     ],
     "Economy & Stock Market": [
